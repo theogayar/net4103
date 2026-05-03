@@ -13,28 +13,21 @@ from networkx.algorithms.community import (
     label_propagation_communities,
 )
 
-# Research Question: How does the structural scale of a university affect the correlation between algorithmically detected communities and student residency (Dorm) versus academic affiliation (Major)?
-
-# Hypothesis: In small, highly dense networks like Caltech, the Dorm/House attribute will yield a significantly higher NMI than the Major attribute. However, as institutional size increases (e.g., at UNC or Oklahoma), the NMI for Major will stabilize or increase while Dorm NMI will decay, suggesting that residency-based social cohesion does not scale linearly with university size.
-
 
 def validate_community_hypothesis(networks):
     results = {}
 
     for name, G in networks.items():
         # 1. Detect communities using Louvain (Modularity Optimization)
-        # As discussed in doc6.pdf, this focuses on mesoscopic groups[cite: 6].
         partition = louvain.best_partition(G)
         detected_labels = [partition[node] for node in G.nodes()]
 
         # 2. Extract ground truth metadata
-        # We handle 'Missing' values (0) by filtering or treating them as a category
         years = [G.nodes[n].get("year", 0) for n in G.nodes()]
         majors = [G.nodes[n].get("major_index", 0) for n in G.nodes()]
         dorms = [G.nodes[n].get("dorm", 0) for n in G.nodes()]
 
         # 3. Compute Normalized Mutual Information (NMI)
-        # NMI is a SOTA metric for benchmarking community stability.
         nmi_year = normalized_mutual_info_score(years, detected_labels)
         nmi_major = normalized_mutual_info_score(majors, detected_labels)
         nmi_dorm = normalized_mutual_info_score(dorms, detected_labels)
