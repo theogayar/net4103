@@ -173,7 +173,8 @@ if __name__ == "__main__":
 
     # 2. Perform calculation on each school in parallel to reduce the lengthy runtime of O(n²) scoring step
     # Note: This was tested on a 24-core machine and reduced runtime to approximately 2minutes for the predefined set.
-    # Using the random selection without parallelization still results in an OOM error if one of the larger schools is hit.
+    # Using the random selection without parallelization still results in an OOM error if one of the larger schools is hit,
+    # altough I only have 32GB of RAM available.
     all_evaluations = Parallel(n_jobs=-1, verbose=10)(
         delayed(process_school)(school_file) for school_file in selected_schools
     )
