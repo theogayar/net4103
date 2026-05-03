@@ -7,8 +7,7 @@ import numpy as np
 import os
 from tqdm import tqdm
 import pandas as pd
-
-# import random
+import random
 
 
 # 1. Define the GNN Encoder as per 4(e)
@@ -92,7 +91,9 @@ def evaluate_gnn(file_name, data_dir="data", k_list=[50, 100, 200, 400]):
 
     # 4. Training
     model.train()
-    for epoch in tqdm(range(1, 151), desc=f"Training {file_name}", unit="epoch"):
+    for epoch in tqdm(
+        range(1, 151), desc=f"Training {file_name}", unit="epoch", leave=False
+    ):
         optimizer.zero_grad()
         z = model.encode(train_data.x, train_data.edge_index)
         loss = model.recon_loss(z, train_data.edge_index)
@@ -105,7 +106,6 @@ def evaluate_gnn(file_name, data_dir="data", k_list=[50, 100, 200, 400]):
         z = model.encode(train_data.x, train_data.edge_index)
         scores = torch.sigmoid(torch.matmul(z, z.t())).cpu().numpy()
 
-    # --- THE FIX: Mask ONLY training edges, NOT original edges ---
     # Create a mask of edges used in training
     adj_train = np.zeros((len(G), len(G)))
     u_tr, v_tr = train_data.edge_index.cpu().numpy()
@@ -119,7 +119,6 @@ def evaluate_gnn(file_name, data_dir="data", k_list=[50, 100, 200, 400]):
     sorted_idx = np.argsort(candidate_scores)[::-1]
 
     # Ground Truth: These are the edges removed by RandomLinkSplit
-    # Positives are where edge_label == 1
     pos_test_edge_index = test_data.edge_label_index[:, test_data.edge_label == 1]
     removed_edges = set(
         tuple(sorted((u, v))) for u, v in pos_test_edge_index.t().tolist()
