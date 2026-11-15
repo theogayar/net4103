@@ -123,7 +123,7 @@ def run_selected_experiments(
     os.makedirs(out_dir, exist_ok=True)
 
     selected_files = [
-        ("Caltech", os.path.join(data_dir, "Cal65.gml")),
+        ("Caltech", os.path.join(data_dir, "Caltech36.gml")),
         ("MIT", os.path.join(data_dir, "MIT8.gml")),
         ("UNC", os.path.join(data_dir, "UNC28.gml")),
         ("Harvard", os.path.join(data_dir, "Harvard1.gml")),
