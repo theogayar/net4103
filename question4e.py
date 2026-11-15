@@ -78,10 +78,12 @@ def evaluate_gnn(file_name, data_dir="data", k_list=[50, 100, 200, 400]):
     data.x = x
 
     # 2. Split edges correctly
+    # No validation split: held-out val edges would stay in the candidate pool below
+    # and count as false positives. This also matches the 10% removal used in question4.py.
     split = RandomLinkSplit(
-        num_val=0.05, num_test=0.1, is_undirected=True, add_negative_train_samples=False
+        num_val=0.0, num_test=0.1, is_undirected=True, add_negative_train_samples=False
     )
-    train_data, val_data, test_data = split(data)
+    train_data, _, test_data = split(data)
     train_data = train_data.to(device)
     test_data = test_data.to(device)
 
