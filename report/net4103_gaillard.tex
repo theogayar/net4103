@@ -33,6 +33,7 @@
 % Question 2: Social Network Analysis with the Facebook100 Dataset
 
 \section{Social Network Analysis with the Facebook100 Dataset}
+\label{sec:network_analysis}
 
 \subsection{Topological Metrics and Sparsity}
 
@@ -85,6 +86,7 @@ A consistent inverse correlation is visible across all three networks: as a node
 However, institutional differences create distinct variations in these patterns. Caltech stands out as a significant outlier, maintaining a mean local clustering coefficient of 0.4091—considerably higher than the 0.2724 and 0.2690 observed at MIT and Johns Hopkins, respectively. This intensified clustering is largely attributed to Caltech's undergraduate House system, which functions as a primary social organizing force. By contrast, the social structures at MIT and Johns Hopkins appear more diffuse. Their larger populations and varied academic or residential systems likely result in more fragmented, specialized clusters, as opposed to the cohesive, overlapping communities fostered in the smaller Caltech environment.
 
 \section{Assortativity Analysis with the Facebook100 Dataset}
+\label{sec:assortativity}
 
 This section investigates the assortative mixing patterns within the Facebook100 dataset across 100 university networks. Assortativity, measured by the coefficient $r$, quantifies the extent to which nodes with similar attributes tend to connect with one another. Positive values ($r > 0$) indicate homophily ("like links with like"), while negative values indicate heterophily.
 
@@ -115,7 +117,7 @@ As part of the analysis conducted in \texttt{question3.py}, we calculated the me
               \caption{Assortativity vs. Network Size and Distribution for Student/Faculty Status.}
           \end{figure}
 
-    \item \textbf{Dormitory:} With a mean $r$ of $0.175$, physical proximity (propinquity) remains a significant factor in friendship formation. As noted in \textit{net4103\_gaillard.pdf}, residential systems like Caltech's Houses create dense local cliques that foster high clustering and assortativity based on living quarters.
+    \item \textbf{Dormitory:} With a mean $r$ of $0.175$, physical proximity (propinquity) remains a significant factor in friendship formation. This is consistent with Section \ref{sec:network_analysis}, where Caltech, whose undergraduate House system organizes social life around residences, showed the highest mean local clustering (0.409), and with Section \ref{sec:community_detection}, where its detected communities align closely with dorms (NMI of 0.534).
           \begin{figure}[h]
               \centering
               \includegraphics[width=0.7\textwidth]{question3_assortativity_dorm.png}
@@ -136,7 +138,7 @@ As part of the analysis conducted in \texttt{question3.py}, we calculated the me
               \caption{Assortativity vs. Network Size and Distribution for Major Index.}
           \end{figure}
 
-    \item \textbf{Gender:} Gender shows the lowest positive assortativity ($r \approx 0.043$). As described in the homework documentation, while there is a slight tendency for gender homophily, the values are close to the line of no assortativity, reflecting a mixture of same-gender friendships and heteronormative dating patterns in the early Facebook era.
+    \item \textbf{Gender:} Gender shows the lowest positive assortativity ($r \approx 0.043$). While there is a slight tendency for gender homophily, the values are close to the line of no assortativity. A plausible explanation is that two effects cancel out: same-gender friendships push $r$ up, while cross-gender relationships, including dating, push it down.
           \begin{figure}[h]
               \centering
               \includegraphics[width=0.7\textwidth]{question3_assortativity_gender.png}
@@ -287,13 +289,14 @@ The results demonstrate a significant variance in recovery accuracy based on the
 
 \begin{itemize}
     \item \textbf{Gender} achieved the highest raw accuracy ($\approx 70\%$), about 20 points above the $\approx 48\%$ baseline. Part of this is the low cardinality of the label (binary classification), but the margin over the baseline shows that the social structure and the other attributes carry a real signal.
-    \item \textbf{Dorm} has a low raw accuracy ($\approx 18$--$22\%$) but is the attribute recovered best relative to chance: roughly 2.5 to 3.5 times its baseline of 6--8\%. This is consistent with the dorm assortativity measured in Section 2, where residence was one of the strongest drivers of friendship.
-    \item \textbf{Major} is barely recovered: the GCN beats its baseline by only 2.5 to 6 points (e.g. 0.141 vs.\ 0.115 at 30\% removed). The model therefore learns little beyond the class frequencies, which matches the weak major assortativity observed in Section 2.
+    \item \textbf{Dorm} has a low raw accuracy ($\approx 18$--$22\%$) but is the attribute recovered best relative to chance: roughly 2.5 to 3.5 times its baseline of 6--8\%. This is consistent with the dorm assortativity measured in Section \ref{sec:assortativity}, where residence was one of the strongest drivers of friendship.
+    \item \textbf{Major} is barely recovered: the GCN beats its baseline by only 2.5 to 6 points (e.g. 0.141 vs.\ 0.115 at 30\% removed). The model therefore learns little beyond the class frequencies, which matches the weak major assortativity observed in Section \ref{sec:assortativity}.
     \item \textbf{Social Context:} The difference in performance reflects the strength of homophily. While "dorm" shows moderate assortativity in topological analysis, the high number of possible dormitories across a campus means that a GCN needs a dense set of labeled neighbors to make an accurate prediction, which is not always available when 30\% of the data is missing.
     \item \textbf{Technical Constraints:} The GCN's performance is also limited by the size of the training set. As we used a rather small school to reduce training time, the model may not have had enough data to learn robust patterns for the more complex attributes, especially as the fraction of missing labels increased.
 \end{itemize}
 
 \section{Community Detection and Group Formation Analysis}
+\label{sec:community_detection}
 
 This section addresses the research question regarding group formation within the Facebook100 dataset, specifically focusing on how institutional scale affects the correlation between algorithmic communities and student attributes.
 
