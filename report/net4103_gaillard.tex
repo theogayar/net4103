@@ -33,6 +33,7 @@
 % Question 2: Social Network Analysis with the Facebook100 Dataset
 
 \section{Social Network Analysis with the Facebook100 Dataset}
+\label{sec:network_analysis}
 
 \subsection{Topological Metrics and Sparsity}
 
@@ -85,6 +86,7 @@ A consistent inverse correlation is visible across all three networks: as a node
 However, institutional differences create distinct variations in these patterns. Caltech stands out as a significant outlier, maintaining a mean local clustering coefficient of 0.4091—considerably higher than the 0.2724 and 0.2690 observed at MIT and Johns Hopkins, respectively. This intensified clustering is largely attributed to Caltech's undergraduate House system, which functions as a primary social organizing force. By contrast, the social structures at MIT and Johns Hopkins appear more diffuse. Their larger populations and varied academic or residential systems likely result in more fragmented, specialized clusters, as opposed to the cohesive, overlapping communities fostered in the smaller Caltech environment.
 
 \section{Assortativity Analysis with the Facebook100 Dataset}
+\label{sec:assortativity}
 
 This section investigates the assortative mixing patterns within the Facebook100 dataset across 100 university networks. Assortativity, measured by the coefficient $r$, quantifies the extent to which nodes with similar attributes tend to connect with one another. Positive values ($r > 0$) indicate homophily ("like links with like"), while negative values indicate heterophily.
 
@@ -115,7 +117,7 @@ As part of the analysis conducted in \texttt{question3.py}, we calculated the me
               \caption{Assortativity vs. Network Size and Distribution for Student/Faculty Status.}
           \end{figure}
 
-    \item \textbf{Dormitory:} With a mean $r$ of $0.175$, physical proximity (propinquity) remains a significant factor in friendship formation. As noted in \textit{net4103\_gaillard.pdf}, residential systems like Caltech's Houses create dense local cliques that foster high clustering and assortativity based on living quarters.
+    \item \textbf{Dormitory:} With a mean $r$ of $0.175$, physical proximity (propinquity) remains a significant factor in friendship formation. This is consistent with Section \ref{sec:network_analysis}, where Caltech, whose undergraduate House system organizes social life around residences, showed the highest mean local clustering (0.409), and with Section \ref{sec:community_detection}, where its detected communities align closely with dorms (NMI of 0.534).
           \begin{figure}[h]
               \centering
               \includegraphics[width=0.7\textwidth]{question3_assortativity_dorm.png}
@@ -136,7 +138,7 @@ As part of the analysis conducted in \texttt{question3.py}, we calculated the me
               \caption{Assortativity vs. Network Size and Distribution for Major Index.}
           \end{figure}
 
-    \item \textbf{Gender:} Gender shows the lowest positive assortativity ($r \approx 0.043$). As described in the homework documentation, while there is a slight tendency for gender homophily, the values are close to the line of no assortativity, reflecting a mixture of same-gender friendships and heteronormative dating patterns in the early Facebook era.
+    \item \textbf{Gender:} Gender shows the lowest positive assortativity ($r \approx 0.043$). While there is a slight tendency for gender homophily, the values are close to the line of no assortativity. A plausible explanation is that two effects cancel out: same-gender friendships push $r$ up, while cross-gender relationships, including dating, push it down.
           \begin{figure}[h]
               \centering
               \includegraphics[width=0.7\textwidth]{question3_assortativity_gender.png}
@@ -168,18 +170,18 @@ The evaluation was performed across 15 representative schools from the dataset (
     \begin{tabular}{|l|c|c|c|}
         \hline
         \textbf{Metric}                   & \textbf{k} & \textbf{Mean Precision@k} & \textbf{Mean Recall@k} \\ \hline
-        \multirow{4}{*}{Adamic/Adar}      & 50         & 0.6520                    & 0.0054                 \\
-                                          & 100        & 0.6260                    & 0.0105                 \\
-                                          & 200        & 0.5637                    & 0.0185                 \\
-                                          & 400        & 0.5052                    & 0.0328                 \\ \hline
-        \multirow{4}{*}{Common Neighbors} & 50         & 0.6520                    & 0.0053                 \\
-                                          & 100        & 0.6207                    & 0.0104                 \\
-                                          & 200        & 0.5437                    & 0.0179                 \\
-                                          & 400        & 0.4843                    & 0.0314                 \\ \hline
-        \multirow{4}{*}{Jaccard}          & 50         & 0.5120                    & 0.0041                 \\
-                                          & 100        & 0.5187                    & 0.0085                 \\
-                                          & 200        & 0.5137                    & 0.0165                 \\
-                                          & 400        & 0.4828                    & 0.0308                 \\ \hline
+        \multirow{4}{*}{Adamic/Adar}      & 50         & 0.6760                    & 0.0057                 \\
+                                          & 100        & 0.6293                    & 0.0106                 \\
+                                          & 200        & 0.5633                    & 0.0188                 \\
+                                          & 400        & 0.5043                    & 0.0327                 \\ \hline
+        \multirow{4}{*}{Common Neighbors} & 50         & 0.6613                    & 0.0057                 \\
+                                          & 100        & 0.6087                    & 0.0103                 \\
+                                          & 200        & 0.5463                    & 0.0182                 \\
+                                          & 400        & 0.4848                    & 0.0314                 \\ \hline
+        \multirow{4}{*}{Jaccard}          & 50         & 0.5267                    & 0.0043                 \\
+                                          & 100        & 0.5340                    & 0.0088                 \\
+                                          & 200        & 0.5157                    & 0.0167                 \\
+                                          & 400        & 0.4762                    & 0.0305                 \\ \hline
     \end{tabular}
     \caption{Mean Precision and Recall across 15 Facebook100 schools.}
     \label{tab:link_pred_results}
@@ -196,7 +198,7 @@ The low recall values in Table \ref{tab:link_pred_results} reflect the evaluatio
 
 Based on the results, we can conclude the following regarding metric efficiency:
 \begin{itemize}
-    \item \textbf{Adamic/Adar} consistently outperformed the other metrics, achieving the highest mean precision (0.652 at $k=50$). This is likely because it penalizes high-degree common neighbors, giving more weight to shared neighbors who are part of smaller, more exclusive social circles.
+    \item \textbf{Adamic/Adar} consistently outperformed the other metrics, achieving the highest mean precision (0.676 at $k=50$). This is likely because it penalizes high-degree common neighbors, giving more weight to shared neighbors who are part of smaller, more exclusive social circles.
     \item \textbf{Common Neighbors} performed similarly to Adamic/Adar but with slightly lower precision, confirming that the raw number of shared friends is a strong predictor of a future connection in social networks.
     \item \textbf{Jaccard Coefficient} showed the lowest performance at low $k$ values. This suggests that normalizing the intersection by the union may be less effective in these sparse university networks compared to the absolute count of commonalities.
 \end{itemize}
@@ -222,15 +224,15 @@ To satisfy the requirement of incorporating node features, we processed the cate
 
 \subsubsection*{Performance Comparison}
 
-The GNN was evaluated on the same 15 schools used for the topological metrics. The mean Precision@k results are compared against the best-performing traditional metric (Adamic/Adar) in Table \ref{tab:gnn_comparison}.
+The GNN was evaluated on the same 15 schools used for the topological metrics. As for the heuristics, 10\% of the edges are held out as the test set and the model is trained on the remaining 90\%; no separate validation split is used, so that every held-out edge counts as a positive and none is wrongly scored as a false positive. The mean Precision@k results are compared against the best-performing traditional metric (Adamic/Adar) in Table \ref{tab:gnn_comparison}.
 
 \begin{table}[ht!]
     \centering
     \begin{tabular}{|l|c|c|c|c|}
         \hline
         \textbf{Metric}                    & \textbf{k=50} & \textbf{k=100} & \textbf{k=200} & \textbf{k=400} \\ \hline
-        \textbf{Adamic/Adar (Topological)} & 0.6520        & 0.6260         & 0.5637         & 0.5052         \\ \hline
-        \textbf{GNN (GAE + Node Features)} & 0.3747        & 0.3320         & 0.2923         & 0.2502         \\ \hline
+        \textbf{Adamic/Adar (Topological)} & 0.6760        & 0.6293         & 0.5633         & 0.5043         \\ \hline
+        \textbf{GNN (GAE + Node Features)} & 0.4920        & 0.4300         & 0.3587         & 0.2967         \\ \hline
     \end{tabular}
     \caption{Comparative Mean Precision@k: Traditional vs. GNN-based Link Prediction.}
     \label{tab:gnn_comparison}
@@ -239,7 +241,7 @@ The GNN was evaluated on the same 15 schools used for the topological metrics. T
 \subsubsection*{Discussion and Trade-offs}
 
 \begin{itemize}
-    \item \textbf{Strengths and Limitations:} The GNN's primary strength is its ability to learn non-linear relationships between node attributes and edge formation. However, the GNN performed significantly worse than the Adamic/Adar heuristic in this experiment. A major limitation is the "static" nature of the FB100 snapshot. Traditional metrics like Adamic/Adar excel when triadic closure (friends-of-friends) is the dominant connection mechanism.
+    \item \textbf{Strengths and Limitations:} The GNN's primary strength is its ability to learn non-linear relationships between node attributes and edge formation. However, the GNN still performed clearly worse than the Adamic/Adar heuristic in this experiment (0.492 vs. 0.676 at $k=50$), and the gap widens in relative terms as $k$ grows. A major limitation is the "static" nature of the FB100 snapshot. Traditional metrics like Adamic/Adar excel when triadic closure (friends-of-friends) is the dominant connection mechanism.
 
     \item \textbf{Impact of Node Features:} Inclusion of features like \texttt{dorm} and \texttt{student\_fac} provides the model with "attribute-based" context that topological metrics ignore. While this should theoretically improve accuracy by identifying homophily (as observed in our assortativity analysis), the high missing-data rate for some attributes in the FB100 dataset likely introduced noise, hindering the GNN's ability to generalize as effectively as the structural heuristics.
 
@@ -265,7 +267,7 @@ The implemented GCN architecture consists of the following components as specifi
 
 \subsection*{Recovery Results: Amherst College (Amherst41)}
 
-Using the Amherst College network, we removed 10\%, 20\%, and 30\% of labels for "dorm", "major", and "gender" to evaluate the recovery accuracy and Mean Absolute Error (MAE).
+Using the Amherst College network, we removed 10\%, 20\%, and 30\% of labels for "dorm", "major", and "gender" to evaluate the recovery accuracy. Since the labels are categorical, each accuracy is compared with a majority-class baseline: the accuracy obtained by always predicting the most common label among the labeled nodes.
 
 \begin{table}[h!]
     \centering
@@ -273,26 +275,28 @@ Using the Amherst College network, we removed 10\%, 20\%, and 30\% of labels for
     \begin{tabular}{|l|c|c|c|}
         \hline
         \textbf{Attribute} & \textbf{10\%} & \textbf{20\%} & \textbf{30\%} \\ \hline
-        \textbf{Dorm}      & 0.194 (8.60)  & 0.147 (8.56)  & 0.189 (8.82)  \\ \hline
-        \textbf{Major}     & 0.242 (6.36)  & 0.155 (7.46)  & 0.121 (7.96)  \\ \hline
-        \textbf{Gender}    & 0.704 (0.30)  & 0.704 (0.30)  & 0.681 (0.32)  \\ \hline
+        \textbf{Dorm}      & 0.217 (0.062) & 0.190 (0.070) & 0.183 (0.080) \\ \hline
+        \textbf{Major}     & 0.158 (0.133) & 0.179 (0.118) & 0.141 (0.115) \\ \hline
+        \textbf{Gender}    & 0.690 (0.478) & 0.675 (0.493) & 0.704 (0.479) \\ \hline
     \end{tabular}
-    \caption{Accuracy and MAE of the GCN-based label propagation for Amherst College. (Fraction Removed: 10\%, 20\%, 30\%)}
+    \caption{Accuracy of the GCN-based label recovery for Amherst College, with the majority-class baseline in parentheses. (Fraction Removed: 10\%, 20\%, 30\%)}
     \label{tab:label_propagation_results}
 \end{table}
 
 \subsection*{Conclusion and Discussion on Accuracy}
 
-The results demonstrate a significant variance in recovery accuracy based on the type of attribute:
+The results demonstrate a significant variance in recovery accuracy based on the type of attribute. Raw accuracies are misleading on their own, since the number of classes differs widely between attributes (2 for gender, 29 for major, 34 for dorm), so we discuss them relative to the majority-class baseline:
 
 \begin{itemize}
-    \item \textbf{Gender} achieved the highest accuracy ($\approx 70\%$). This is primarily due to the low cardinality of the label (binary classification), where the probability of correct random assignment is 50\%, and the underlying social structure provides a stable signal for the GCN to refine.
-    \item \textbf{Major} and \textbf{Dorm} exhibit much lower accuracy. These attributes have high cardinality (many distinct classes), which significantly increases the difficulty of the classification task. As the fraction of removed labels increases to 30\%, the accuracy for \textbf{Major} drops to 0.121, suggesting that the model lacks sufficient labeled "anchors" to propagate labels across the graph effectively.
+    \item \textbf{Gender} achieved the highest raw accuracy ($\approx 70\%$), about 20 points above the $\approx 48\%$ baseline. Part of this is the low cardinality of the label (binary classification), but the margin over the baseline shows that the social structure and the other attributes carry a real signal.
+    \item \textbf{Dorm} has a low raw accuracy ($\approx 18$--$22\%$) but is the attribute recovered best relative to chance: roughly 2.5 to 3.5 times its baseline of 6--8\%. This is consistent with the dorm assortativity measured in Section \ref{sec:assortativity}, where residence was one of the strongest drivers of friendship.
+    \item \textbf{Major} is barely recovered: the GCN beats its baseline by only 2.5 to 6 points (e.g. 0.141 vs.\ 0.115 at 30\% removed). The model therefore learns little beyond the class frequencies, which matches the weak major assortativity observed in Section \ref{sec:assortativity}.
     \item \textbf{Social Context:} The difference in performance reflects the strength of homophily. While "dorm" shows moderate assortativity in topological analysis, the high number of possible dormitories across a campus means that a GCN needs a dense set of labeled neighbors to make an accurate prediction, which is not always available when 30\% of the data is missing.
     \item \textbf{Technical Constraints:} The GCN's performance is also limited by the size of the training set. As we used a rather small school to reduce training time, the model may not have had enough data to learn robust patterns for the more complex attributes, especially as the fraction of missing labels increased.
 \end{itemize}
 
 \section{Community Detection and Group Formation Analysis}
+\label{sec:community_detection}
 
 This section addresses the research question regarding group formation within the Facebook100 dataset, specifically focusing on how institutional scale affects the correlation between algorithmic communities and student attributes.
 
@@ -322,18 +326,18 @@ The experimental results for the selected schools are summarized in Table \ref{t
     \begin{tabular}{|l|l|c|c|c|}
         \hline
         \textbf{University (Nodes)}       & \textbf{Algorithm} & \textbf{NMI: Year} & \textbf{NMI: Major} & \textbf{NMI: Dorm} \\ \hline
-        \multirow{3}{*}{Caltech (11,247)} & Louvain            & 0.2392             & 0.0406              & 0.2597             \\
-                                          & Label Prop         & 0.2135             & 0.0097              & 0.1447             \\
-                                          & Asyn LPA           & 0.2119             & 0.0101              & 0.1443             \\ \hline
-        \multirow{3}{*}{MIT (6,440)}      & Louvain            & 0.2494             & 0.0450              & 0.2291             \\
+        \multirow{3}{*}{Caltech (769)}    & Louvain            & 0.0906             & 0.0857              & 0.5339             \\
+                                          & Label Prop         & 0.0414             & 0.0235              & 0.0181             \\
+                                          & Asyn LPA           & 0.0414             & 0.0235              & 0.0181             \\ \hline
+        \multirow{3}{*}{MIT (6,440)}      & Louvain            & 0.2218             & 0.0455              & 0.2562             \\
                                           & Label Prop         & 0.2062             & 0.0366              & 0.0521             \\
-                                          & Asyn LPA           & 0.1855             & 0.0355              & 0.0474             \\ \hline
-        \multirow{3}{*}{UNC (18,163)}     & Louvain            & 0.2916             & 0.0419              & 0.2044             \\
+                                          & Asyn LPA           & 0.0431             & 0.0249              & 0.0208             \\ \hline
+        \multirow{3}{*}{UNC (18,163)}     & Louvain            & 0.2903             & 0.0476              & 0.2121             \\
                                           & Label Prop         & 0.0039             & 0.0075              & 0.0025             \\
-                                          & Asyn LPA           & 0.0031             & 0.0038              & 0.0019             \\ \hline
-        \multirow{3}{*}{Harvard (15,126)} & Louvain            & 0.4866             & 0.0533              & 0.1516             \\
+                                          & Asyn LPA           & 0.0034             & 0.0064              & 0.0022             \\ \hline
+        \multirow{3}{*}{Harvard (15,126)} & Louvain            & 0.4772             & 0.0539              & 0.1512             \\
                                           & Label Prop         & 0.3547             & 0.0396              & 0.1623             \\
-                                          & Asyn LPA           & 0.2193             & 0.0366              & 0.1517             \\ \hline
+                                          & Asyn LPA           & 0.2245             & 0.0391              & 0.1548             \\ \hline
     \end{tabular}
     \caption{NMI scores for detected communities against student attributes across four universities.}
     \label{tab:nmi_results}
@@ -351,11 +355,12 @@ The experimental results for the selected schools are summarized in Table \ref{t
 The analysis reveals several critical insights into the social structure of these university networks:
 
 \begin{itemize}
-    \item \textbf{Dormitory Influence and Scale:} The hypothesis regarding Caltech was confirmed; the \textbf{Dorm} attribute yielded the highest NMI (0.2597), confirming that residency is a primary organizing force in smaller, specialized environments. As institutional size increased (e.g., Harvard), the relative influence of the Dorm attribute decreased to 0.1516, supporting the idea that residential cohesion does not scale linearly with university size.
-    \item \textbf{Academic Affiliation (Major):} Contrary to the hypothesis, the NMI for \textbf{Major} remained consistently low (roughly 0.04 to 0.05) across all scales. This suggests that academic affiliation is a poor predictor of community structure compared to residency and seniority, regardless of university size.
-    \item \textbf{The Dominance of Graduation Year:} The most significant finding was the strength of the \textbf{Year} attribute, especially at larger schools like Harvard ($NMI = 0.4866$). This indicates that class-year cohorts are the dominant organizing principle in large universities, likely due to shared schedules, events, and common academic progression.
+    \item \textbf{Dormitory Influence and Scale:} The hypothesis regarding Caltech was strongly confirmed: with Louvain, the \textbf{Dorm} attribute reaches an NMI of 0.5339, the highest value in the whole experiment and more than six times the NMI for Major (0.0857). This is consistent with Caltech's undergraduate House system acting as the primary organizing force of social life. Dorm NMI then drops at the larger schools (0.2562 at MIT, 0.2121 at UNC, 0.1512 at Harvard). The decrease is not strictly monotonic in size, since UNC is larger than Harvard yet has a higher Dorm NMI, so institutional size is not the only factor: residential policies also differ between schools.
+    \item \textbf{Academic Affiliation (Major):} Contrary to the hypothesis, the NMI for \textbf{Major} does not increase with size. It is highest at Caltech (0.0857) and stays low (roughly 0.045 to 0.054) at the three larger schools. Academic affiliation is therefore a poor predictor of community structure compared to residency and seniority, regardless of university size.
+    \item \textbf{The Dominance of Graduation Year:} The NMI for \textbf{Year} grows steadily with size, from 0.0906 at Caltech to 0.2218 at MIT, 0.2903 at UNC and 0.4772 at Harvard, where it is the strongest signal. This indicates that class-year cohorts become the dominant organizing principle in large universities, likely due to shared schedules, events, and common academic progression.
+    \item \textbf{Label Propagation Instability:} Both label propagation variants give near-zero NMI on Caltech and UNC. On Caltech, label propagation assigns 758 of the 769 nodes to a single community, so these scores reflect a collapse of the algorithm on a small, dense network rather than an absence of structure. Louvain is the only method that gives consistent partitions across all four schools, and the conclusions above rely on its results.
 \end{itemize}
 
-In conclusion, our experiment confirms that residency-based social clustering is highly effective at small scales but is superseded by class-year cohorts as the primary driver of community formation in larger university networks. This aligns with the observations from the first referenced paper by the assignment.
+In conclusion, our experiment confirms that residency-based social clustering is highly effective at small scales, with Caltech as the clearest case, but is superseded by class-year cohorts as the primary driver of community formation in larger university networks. This aligns with the observations from the first referenced paper by the assignment.
 
 \end{document}

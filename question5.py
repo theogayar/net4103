@@ -1,16 +1,15 @@
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
-import pandas as pd
 import networkx as nx
 import numpy as np
+import pandas as pd
+import torch
+import torch.nn.functional as F
+from torch import nn
 from tqdm import tqdm
-from sklearn.metrics import mean_absolute_error
 
 
 class GCNLayer(nn.Module):
     def __init__(self, in_features, out_features):
-        super(GCNLayer, self).__init__()
+        super().__init__()
         self.weight = nn.Parameter(torch.FloatTensor(in_features, out_features))
         nn.init.xavier_uniform_(self.weight)
 
@@ -23,7 +22,7 @@ class GCNLayer(nn.Module):
 
 class GCN(nn.Module):
     def __init__(self, nfeat, nhid, nclass, dropout):
-        super(GCN, self).__init__()
+        super().__init__()
         self.gc1 = GCNLayer(nfeat, nhid)
         self.gc2 = GCNLayer(nhid, nclass)
         self.dropout = dropout
@@ -73,7 +72,7 @@ def prepare_facebook_data(file_path, target_attr):
 
     # Label Mapping
     labels_raw = [G_sub.nodes[n][label_attr] for n in G_sub.nodes]
-    unique_labels = sorted(list(set(labels_raw)))
+    unique_labels = sorted(set(labels_raw))
     label_map = {old: new for new, old in enumerate(unique_labels)}
     labels = torch.LongTensor([label_map[label] for label in labels_raw])
 
@@ -81,7 +80,9 @@ def prepare_facebook_data(file_path, target_attr):
     return adj, labels, features
 
 
-def run_recovery(school_file, target_attr, fractions=[0.1, 0.2, 0.3]):
+def run_recovery(school_file, target_attr, fractions=None):
+    if fractions is None:
+        fractions = [0.1, 0.2, 0.3]
     adj_raw, labels, features = prepare_facebook_data(school_file, target_attr)
     adj_norm = normalize_adj(torch.FloatTensor(adj_raw))
 
@@ -116,9 +117,13 @@ def run_recovery(school_file, target_attr, fractions=[0.1, 0.2, 0.3]):
         preds = output[unlabeled_idx].max(1)[1]
 
         acc = preds.eq(labels[unlabeled_idx]).sum().item() / num_remove
-        mae = mean_absolute_error(labels[unlabeled_idx].numpy(), preds.numpy())
 
-        final_results[f] = f"{acc:.3f} (MAE: {mae:.2f})"
+        # Labels are categorical indices, so MAE is meaningless; compare against
+        # always predicting the most common label among the labeled nodes instead.
+        majority = labels[labeled_idx].mode().values.item()
+        baseline = (labels[unlabeled_idx] == majority).sum().item() / num_remove
+
+        final_results[f] = f"{acc:.3f} (baseline: {baseline:.3f})"
 
     return final_results
 
@@ -127,10 +132,11 @@ def run_recovery(school_file, target_attr, fractions=[0.1, 0.2, 0.3]):
 school = "data/Amherst41.gml"
 
 # school = "data/Harvard1.gml"
-# Note: running with Harvard (as an example for a large network) takes significantly longer, and yields the following results:
-#   Attribute                 0.1                 0.2                 0.3                                                                                                                                                                     0      dorm   0.105 (MAE: 5.68)   0.109 (MAE: 6.56)   0.112 (MAE: 5.53)
-# 1     major  0.147 (MAE: 10.27)  0.155 (MAE: 10.15)  0.161 (MAE: 10.13)
-# 2    gender   0.648 (MAE: 0.35)   0.612 (MAE: 0.39)   0.629 (MAE: 0.37)
+# Note: running with Harvard (as an example for a large network) takes significantly longer, and yields the following accuracies:
+#   Attribute    0.1    0.2    0.3
+# 0      dorm  0.105  0.109  0.112
+# 1     major  0.147  0.155  0.161
+# 2    gender  0.648  0.612  0.629
 
 attributes = ["dorm", "major", "gender"]
 table_data = []

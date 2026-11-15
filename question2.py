@@ -1,6 +1,7 @@
-import networkx as nx
-import matplotlib.pyplot as plt
 import os
+
+import matplotlib.pyplot as plt
+import networkx as nx
 
 # Define schools and paths
 schools = ["Caltech36", "MIT8", "Johns Hopkins55"]

@@ -1,17 +1,18 @@
-import networkx as nx
-import community.community_louvain as louvain
-from sklearn.metrics import normalized_mutual_info_score
-import matplotlib.pyplot as plt
-import os
-import numpy as np
 import multiprocessing as mp
-from tqdm import tqdm
+import os
 from concurrent.futures import ProcessPoolExecutor, as_completed
+
+import community.community_louvain as louvain
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
 from networkx.algorithms.community import (
-    greedy_modularity_communities,
     asyn_lpa_communities,
+    greedy_modularity_communities,
     label_propagation_communities,
 )
+from sklearn.metrics import normalized_mutual_info_score
+from tqdm import tqdm
 
 
 def validate_community_hypothesis(networks):
@@ -123,7 +124,7 @@ def run_selected_experiments(
     os.makedirs(out_dir, exist_ok=True)
 
     selected_files = [
-        ("Caltech", os.path.join(data_dir, "Cal65.gml")),
+        ("Caltech", os.path.join(data_dir, "Caltech36.gml")),
         ("MIT", os.path.join(data_dir, "MIT8.gml")),
         ("UNC", os.path.join(data_dir, "UNC28.gml")),
         ("Harvard", os.path.join(data_dir, "Harvard1.gml")),
@@ -140,15 +141,14 @@ def run_selected_experiments(
 
     tasks = []
     skipped_tasks = []
-    for name in graphs.keys():
-        G = graphs[name]
+    for name, G in graphs.items():
         for method in methods:
             if method == "greedy" and G.number_of_nodes() > max_nodes_for_greedy:
                 skipped_tasks.append((name, method))
                 continue
             tasks.append((name, method, G))
 
-    results = {name: {} for name in graphs.keys()}
+    results = {name: {} for name in graphs}
 
     worker_count = _resolve_worker_count(n_jobs)
     mp_ctx = None
@@ -174,8 +174,8 @@ def run_selected_experiments(
             results[name][method] = future.result()
 
     # Print results
-    for name in graphs.keys():
-        print(f"\n{name} ({graphs[name].number_of_nodes()} nodes)")
+    for name, G in graphs.items():
+        print(f"\n{name} ({G.number_of_nodes()} nodes)")
         for method in methods:
             if method in results[name]:
                 r = results[name][method]
@@ -184,7 +184,7 @@ def run_selected_experiments(
                 )
             elif (name, method) in skipped_tasks:
                 print(
-                    f" {method:12} | skipped on {graphs[name].number_of_nodes()} nodes (set max_nodes_for_greedy higher to force it)"
+                    f" {method:12} | skipped on {G.number_of_nodes()} nodes (set max_nodes_for_greedy higher to force it)"
                 )
 
     # Plot all results
@@ -192,7 +192,7 @@ def run_selected_experiments(
     if len(graphs) == 1:
         axes = [axes]
 
-    for idx, name in enumerate(graphs.keys()):
+    for idx, (name, G) in enumerate(graphs.items()):
         ax = axes[idx]
         x = np.arange(len(methods))
         width = 0.25
