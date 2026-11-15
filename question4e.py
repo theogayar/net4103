@@ -1,19 +1,19 @@
-import torch
-from torch_geometric.nn import GCNConv, GAE
-from torch_geometric.utils import from_networkx
-from torch_geometric.transforms import RandomLinkSplit
+import os
+
 import networkx as nx
 import numpy as np
-import os
-from tqdm import tqdm
 import pandas as pd
-import random
+import torch
+from torch_geometric.nn import GAE, GCNConv
+from torch_geometric.transforms import RandomLinkSplit
+from torch_geometric.utils import from_networkx
+from tqdm import tqdm
 
 
 # 1. Define the GNN Encoder as per 4(e)
 class GCNEncoder(torch.nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(GCNEncoder, self).__init__()
+        super().__init__()
         self.conv1 = GCNConv(in_channels, 2 * out_channels)
         self.conv2 = GCNConv(2 * out_channels, out_channels)
 
@@ -57,7 +57,9 @@ def build_node_features(G, feature_attrs):
     return features
 
 
-def evaluate_gnn(file_name, data_dir="data", k_list=[50, 100, 200, 400]):
+def evaluate_gnn(file_name, data_dir="data", k_list=None):
+    if k_list is None:
+        k_list = [50, 100, 200, 400]
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     G = nx.Graph(nx.read_gml(os.path.join(data_dir, file_name)))
     G = nx.convert_node_labels_to_integers(G)
@@ -122,9 +124,7 @@ def evaluate_gnn(file_name, data_dir="data", k_list=[50, 100, 200, 400]):
 
     # Ground Truth: These are the edges removed by RandomLinkSplit
     pos_test_edge_index = test_data.edge_label_index[:, test_data.edge_label == 1]
-    removed_edges = set(
-        tuple(sorted((u, v))) for u, v in pos_test_edge_index.t().tolist()
-    )
+    removed_edges = {tuple(sorted((u, v))) for u, v in pos_test_edge_index.t().tolist()}
 
     results = []
     for k in k_list:

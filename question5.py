@@ -22,7 +22,7 @@ class GCNLayer(nn.Module):
 
 class GCN(nn.Module):
     def __init__(self, nfeat, nhid, nclass, dropout):
-        super(GCN, self).__init__()
+        super().__init__()
         self.gc1 = GCNLayer(nfeat, nhid)
         self.gc2 = GCNLayer(nhid, nclass)
         self.dropout = dropout
@@ -72,7 +72,7 @@ def prepare_facebook_data(file_path, target_attr):
 
     # Label Mapping
     labels_raw = [G_sub.nodes[n][label_attr] for n in G_sub.nodes]
-    unique_labels = sorted(list(set(labels_raw)))
+    unique_labels = sorted(set(labels_raw))
     label_map = {old: new for new, old in enumerate(unique_labels)}
     labels = torch.LongTensor([label_map[label] for label in labels_raw])
 
@@ -80,7 +80,9 @@ def prepare_facebook_data(file_path, target_attr):
     return adj, labels, features
 
 
-def run_recovery(school_file, target_attr, fractions=[0.1, 0.2, 0.3]):
+def run_recovery(school_file, target_attr, fractions=None):
+    if fractions is None:
+        fractions = [0.1, 0.2, 0.3]
     adj_raw, labels, features = prepare_facebook_data(school_file, target_attr)
     adj_norm = normalize_adj(torch.FloatTensor(adj_raw))
 

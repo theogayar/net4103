@@ -1,12 +1,12 @@
-import networkx as nx
 import os
-import numpy as np
-from abc import ABC, abstractmethod
-import pandas as pd
 import random
-from joblib import Parallel, delayed
-import matplotlib.pyplot as plt
+from abc import ABC, abstractmethod
 
+import matplotlib.pyplot as plt
+import networkx as nx
+import numpy as np
+import pandas as pd
+from joblib import Parallel, delayed
 
 # 4(b) Link Prediction Metric Implementations
 
